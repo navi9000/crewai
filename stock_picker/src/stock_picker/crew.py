@@ -37,7 +37,7 @@ class StockPicker():
 
     @agent
     def trending_company_finder(self) -> Agent:
-        return Agent(config=self.agents_config['trending_company_finder'], tools=[SerperDevTool()])
+        return Agent(config=self.agents_config['trending_company_finder'], tools=[SerperDevTool()], memory=True)
 
     @agent
     def financial_researcher(self) -> Agent:
@@ -45,7 +45,7 @@ class StockPicker():
 
     @agent
     def stock_picker(self) -> Agent:
-        return Agent(config=self.agents_config['stock_picker'])
+        return Agent(config=self.agents_config['stock_picker'], memory=True)
 
     @task
     def find_trending_companies(self) -> Task:
@@ -65,7 +65,16 @@ class StockPicker():
 
         manager = Agent(config=self.agents_config['manager'], allow_delegation=True)
 
-        return Crew(agents=self.agents, tasks=self.tasks, process=Process.hierarchical, verbose=True, manager_agent=manager)
+
+        return Crew(
+            agents=self.agents, 
+            tasks=self.tasks, 
+            process=Process.hierarchical, 
+            verbose=True, 
+            manager_agent=manager, 
+            memory=True,
+            embedder={"provider": "ollama", "config": {"model_name": "mxbai-embed-large"}}
+            )
 
     
 
